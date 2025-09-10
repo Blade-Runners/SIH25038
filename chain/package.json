@@ -1,0 +1,25 @@
+{
+  "name": "xbc_js",
+  "version": "1.0.0",
+  "description": "A Proof of Work blockchain from scratch using ESM JavaScript with API support, smart contracts, and native tokens",
+  "type": "module",
+  "main": "scripts/server.js",
+  "scripts": {
+    "server": "node scripts/server.js",
+    "miner": "node scripts/miner.js",
+    "client": "node scripts/client.js",
+    "test": "node tests/test.js"
+  },
+  "keywords": [
+    "blockchain",
+    "proof-of-work",
+    "cryptocurrency",
+    "p2p",
+    "smart-contracts"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
