@@ -17,7 +17,11 @@ const LandingPage = () => {
     <div className="landing-container" style={backgroundStyle}>
       {/* Navbar */}
       <nav className="navbar">
-        <h1>Mangrove Carbon Registry</h1>
+        <h1>
+          <i>
+            BLUE LEDGER
+          </i>
+        </h1>
         <div className="nav-links">
           <Link to="/auth">Login / Register</Link>
         </div>
