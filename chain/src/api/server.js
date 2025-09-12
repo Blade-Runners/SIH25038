@@ -33,7 +33,6 @@ export class APIServer {
     this.nodeId = options.nodeId || CryptoUtils.generateId();
     this.enableDashboard = options.enableDashboard;
     
-    // These will be initialized after config is loaded
     this.blockchain = null;
     this.carbonContract = null;
     this.persistence = null;
@@ -47,20 +46,17 @@ export class APIServer {
     this.server = null;
     this.isRunning = false;
     
-    // Generate node credentials
     this.nodeKeys = null;
     
-    // Identity management for third-party registration
-    this.registeredIdentities = new Map(); // uuid -> key
-    this.validationPool = new Map(); // transactionId -> {data, submittedBy, timestamp, votes}
-    this.validationTimeout = null; // Will be set from config
+    this.registeredIdentities = new Map();
+    this.validationPool = new Map();
+    this.validationTimeout = null;
   }
 
   /**
    * Initialize configuration and components
    */
   async initialize() {
-    // Load configuration first
     this.config = getConfig();
     await this.config.load();
     
