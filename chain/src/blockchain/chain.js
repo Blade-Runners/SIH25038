@@ -14,7 +14,7 @@ export class Blockchain {
     
     this.chain = [];
     this.pendingTransactions = [];
-    this.authorities = new Map(); // PoA validators: id -> {publicKey, reputation, isActive}
+    this.authorities = new Map();
     
     // Use config values with defaults
     this.validationThreshold = 0.67;
