@@ -1,25 +1,29 @@
 {
-  "name": "xbc_js",
+  "name": "blue-carbon-mrv",
   "version": "1.0.0",
-  "description": "A Proof of Work blockchain from scratch using ESM JavaScript with API support, smart contracts, and native tokens",
+  "description": "Blockchain-powered Monitoring, Reporting, and Verification system for blue carbon ecosystem restoration",
   "type": "module",
-  "main": "scripts/server.js",
+  "main": "src/api/server.js",
   "scripts": {
-    "server": "node scripts/server.js",
-    "miner": "node scripts/miner.js",
-    "client": "node scripts/client.js",
-    "test": "node tests/test.js"
+    "start": "node src/api/server.js",
+    "peer": "node peers/peer-node.js",
+    "test": "node --test src/tests/*.test.js",
+    "dev": "node --watch src/api/server.js"
   },
   "keywords": [
     "blockchain",
-    "proof-of-work",
-    "cryptocurrency",
+    "carbon-credits",
+    "blue-carbon",
+    "mrv",
     "p2p",
-    "smart-contracts"
+    "websocket"
   ],
-  "author": "",
+  "author": "BC Team",
   "license": "MIT",
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "ws": "^8.18.3"
   }
 }
