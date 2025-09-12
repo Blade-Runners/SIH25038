@@ -94,7 +94,7 @@ export class ProofOfAuthority {
       // Only produce block if we have pending transactions
       if (this.blockchain.pendingTransactions.length === 0) {
         // Log this message only occasionally to avoid flooding
-        if (this.currentRound % 10 === 0) {
+        if (this.currentRound % 100 === 0) {
           console.log(`[PoA] No pending transactions, skipping block production (round ${this.currentRound})`);
         }
         this.advanceRound();
