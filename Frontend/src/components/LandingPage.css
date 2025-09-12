@@ -1,37 +1,53 @@
-
-/* Import these from Google Fonts */
+/* Import fonts */
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Open+Sans:wght@400;600&display=swap');
 
 body {
   font-family: 'Open Sans', sans-serif;
-  color: #ede8e8;
+  color: #f1f1f1;
   line-height: 1.6;
-}
-
-.hero-text h1, .about h2, .features h3 {
-  font-family: 'Playfair Display', serif;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1.2px;
-  color: #eaeeec;
-}
-
-.hero-text p, .features .card p {
-  font-family: 'Open Sans', sans-serif;
-  font-weight: 400;
-  color: #f3efef;
-}
-
-/* Buttons can use Open Sans or Montserrat for crispness */
-button {
-  font-family: 'Open Sans', sans-serif;
-  font-weight: 600;
+  margin: 0;
+  padding: 0;
+  background: #f9fafb;
 }
 
 .landing-container {
   width: 100%;
   margin: 0 auto;
   padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 10%;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(6px);
+}
+
+.navbar h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  margin: 0;
+}
+
+.nav-links a {
+  text-decoration: none;
+  font-weight: 600;
+  color: #d1f7c4;
+  transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+  color: #95d5b2;
 }
 
 /* Hero Section */
@@ -40,85 +56,111 @@ button {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  padding: 60px 10%;
+  padding: 80px 10%;
   border-radius: 0 0 40px 40px;
   position: relative;
-  overflow: hidden; /* prevent overlay spill */
+  overflow: hidden;
+  flex: 1;
 }
 
-/* Add a dark overlay for text readability */
+/* Overlay */
 .hero::before {
   content: "";
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 60%; /* reduce vertical height of overlay */
-  background: rgba(0, 0, 0, 0.25); /* lighter overlay */
-  border-radius: 0 0 40px 40px;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
   z-index: 0;
-  pointer-events: none;
 }
 
+/* Hero Text */
 .hero-text {
   max-width: 50%;
-  position: relative; /* ensures text sits above overlay */
+  position: relative;
   z-index: 1;
-  color: white; /* move color here so text is white */
+  color: #fff;
 }
 
 .hero-text h1 {
-  font-size: 2.5rem;
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem;
   margin-bottom: 20px;
+  line-height: 1.2;
 }
 
 .hero-text p {
   font-size: 1.2rem;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
+  color: #e6f2ec;
+}
+
+.hero-text button {
+  background: #2d6a4f;
+  color: white;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.hero-text button:hover {
+  background: #40916c;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+}
+
+/* Hero Image */
+.hero-image {
+  max-width: 45%;
+  position: relative;
+  z-index: 1;
 }
 
 .hero-image img {
-  max-width: 750px;
   width: 100%;
-  height: auto;
   border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  opacity: 1; /* keep image brightness */
-  filter: brightness(1.05) contrast(1.05); /* optional enhancement */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  transition: transform 0.4s ease;
 }
 
-/* Optional: scale up slightly on hover for subtle effect */
 .hero-image img:hover {
   transform: scale(1.05);
 }
 
-/* Responsive tweak: stack vertically on small screens */
+/* Responsive: stack vertically */
 @media (max-width: 768px) {
   .hero {
     flex-direction: column;
-    padding: 40px 5%;
-  }
-  .hero-text, .hero-image {
-    max-width: 100%;
+    padding: 50px 5%;
     text-align: center;
   }
   .hero-text {
+    max-width: 100%;
     margin-bottom: 30px;
   }
-  .hero-image img {
-    max-width: 90vw;
+  .hero-image {
+    max-width: 90%;
+  }
+  .hero-text h1 {
+    font-size: 2rem;
+  }
+  .hero-text p {
+    font-size: 1rem;
   }
 }
 
 /* About Section */
 .about {
-  padding: 50px 10%;
+  padding: 60px 10%;
   text-align: center;
+  background: #f0f9f6;
+  color: #1b4332;
 }
 
 .about h2 {
-  color: #1B4332;
-  font-size: 2rem;
+  font-size: 2.2rem;
   margin-bottom: 15px;
 }
 
@@ -127,17 +169,31 @@ button {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  padding: 40px 10%;
+  padding: 60px 10%;
   gap: 20px;
+  background: #fff;
 }
 
-/* Reuse .card style from App.css */
 .features .card {
   flex: 1 1 250px;
   max-width: 300px;
+  padding: 20px;
+  border-radius: 15px;
+  background: #f8f9fa;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease;
+}
+
+.features .card:hover {
+  transform: translateY(-5px);
 }
 
 /* Footer */
 footer {
-  margin-top: 60px;
+  margin-top: auto;
+  background: #081c15;
+  color: #d8f3dc;
+  text-align: center;
+  padding: 20px;
+  font-size: 0.9rem;
 }

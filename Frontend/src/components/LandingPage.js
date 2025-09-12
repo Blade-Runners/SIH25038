@@ -35,9 +35,9 @@ const LandingPage = () => {
             <button onClick={() => navigate("/auth")}>Get Started</button>
           </div>
         </div>
-        <div className="hero-image">
+        {/* <div className="hero-image">
           <img src="sundarbans.jpg" alt="Mangrove Forest" />
-        </div>
+        </div> */}
       </section>
     </div>
   );
