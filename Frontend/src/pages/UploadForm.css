@@ -1,0 +1,111 @@
+/* Container Styling */
+.form-container {
+  background: #fff;
+  padding: 30px 25px;
+  margin: 50px auto;
+  max-width: 480px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Title */
+.form-container h2 {
+  text-align: center;
+  color: #036c4c;
+  margin-bottom: 20px;
+  font-size: 22px;
+}
+
+/* Labels */
+form label {
+  display: block;
+  margin-top: 16px;
+  font-weight: 600;
+  color: #333;
+  font-size: 15px;
+}
+
+/* Inputs */
+form input[type="text"],
+form input[type="file"] {
+  width: 100%;
+  padding: 12px 14px; /* proper padding */
+  margin-top: 6px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  box-sizing: border-box; /* ensures padding doesn't overflow */
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+form input[type="text"]:focus,
+form input[type="file"]:focus {
+  outline: none;
+  border-color: #036c4c;
+  box-shadow: 0 0 4px rgba(3, 108, 76, 0.3);
+}
+
+/* Image Preview */
+.preview {
+  margin-top: 18px;
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.08);
+}
+
+/* Submit Button */
+button[type="submit"] {
+  margin-top: 25px;
+  width: 100%;
+  background-color: #036c4c;
+  color: white;
+  padding: 14px 0;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.25s ease, transform 0.15s ease;
+}
+
+button[type="submit"]:hover {
+  background-color: #024d38;
+}
+
+button[type="submit"]:disabled {
+  background-color: #9fbfb5;
+  cursor: not-allowed;
+}
+
+/* Location Status Text */
+.location-status {
+  font-size: 13px;
+  color: #666;
+  margin-left: 4px;
+}
+
+/* Location Error Text */
+.location-error {
+  color: #c0392b;
+  font-size: 13px;
+  margin-top: 6px;
+  font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+  .form-container {
+    margin: 30px 15px;
+    padding: 25px 20px;
+  }
+
+  .form-container h2 {
+    font-size: 20px;
+  }
+
+  button[type="submit"] {
+    font-size: 15px;
+  }
+}

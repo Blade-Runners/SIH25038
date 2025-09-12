@@ -1,0 +1,16 @@
+.admin-container {
+  padding: 30px 20px;
+}
+
+.admin-container h2 {
+  text-align: center;
+  color: #036c4c;
+  margin-bottom: 30px;
+}
+
+.card-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
