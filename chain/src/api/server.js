@@ -1158,7 +1158,7 @@ export class APIServer {
 }
 
 // Start server if run directly
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const server = new APIServer({
     port: process.env.PORT,
     p2pPort: process.env.P2P_PORT,

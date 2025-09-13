@@ -7,6 +7,7 @@
 import APIServer from '../src/api/server.js';
 import CryptoUtils from '../src/crypto/crypto-utils.js';
 import { loadConfig } from '../src/config/config-loader.js';
+import { fileURLToPath } from 'url';
 
 class PeerNode {
   constructor(options = {}) {
@@ -411,7 +412,7 @@ async function main() {
 }
 
 // Run if this file is executed directly
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
   main().catch(error => {
     console.error('[Peer] Startup failed:', error);
     process.exit(1);
