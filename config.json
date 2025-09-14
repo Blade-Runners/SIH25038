@@ -1,0 +1,12 @@
+{
+  "chain":"data",
+  "saveInterval": 120,
+  "subnetMask": 24,
+  "sim_thres": 0.85,
+  "val_timeout": 300,
+  "port": 3000,
+  "p2p": 3002,
+  "privilegedUuid": "0199431c-f56e-7500-a965-2d0b2659bc7f",
+  "uuid_val_thres": 0.67,
+  "peer_val_thres": 0.33
+}
