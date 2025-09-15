@@ -55,8 +55,8 @@ export class HTTPServer {
         await this.handleGetCredits(req, res, body);
       } else if (pathname === '/api/submission' && method === 'POST') {
         await this.handleGetSubmission(req, res, body);
-      } else if (pathname === '/docs' && method === 'GET') {
-        await this.handleDocs(req, res);
+      // } else if (pathname === '/docs' && method === 'GET') {
+      //   await this.handleDocs(req, res);
       } else {
         this.sendResponse(res, 404, { error: 'Not found' });
       }
