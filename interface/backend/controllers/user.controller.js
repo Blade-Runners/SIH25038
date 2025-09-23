@@ -27,7 +27,7 @@ const register = async (req, res) => {
         const UUID = crypto.randomUUID();
 
         const blockchainResponse = await axios.post('http://localhost:3000/api/register', { uuid: UUID });
-        
+
         if (!blockchainResponse.data || !blockchainResponse.data.key) {
             return res.status(500).json({
                 success: false,
@@ -90,7 +90,7 @@ const login = async (req, res) => {
             });
         }
 
-        if(user.privatekey != privatekey){
+        if (user.privatekey != privatekey) {
             return res.status(400).json({
                 success: false,
                 message: "Invalid Private Key"
@@ -133,31 +133,31 @@ const login = async (req, res) => {
 }
 
 
-const verify = async (req,res)=>{
+const verify = async (req, res) => {
 
     const errors = validationResult(req);
-    if(!errors.isEmpty()){
-        return res.status(400).json({errors: errors.array()});
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
     }
 
     const token = req.cookies.userToken
-;
+        ;
 
     if (!token) {
         return res.status(400).json({
-            success:false,
-            message:"invalid token"
+            success: false,
+            message: "invalid token"
         })
     }
 
     const user = verifyToken(token)
 
-    if(user){
+    if (user) {
         return createResponse(200).json({
-            success:true,
-            message:"valid token"
+            success: true,
+            message: "valid token"
         })
     }
 }
 
-export {register, login, verify}
+export { register, login, verify }
