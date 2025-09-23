@@ -27,32 +27,22 @@ const LoginRegisterPage = ({ setIsLoggedIn }) => {
     setRegistrationKey(null);
 
     try {
-      const endpoint = isLogin ? "/login" : "/register";
+      const endpoint = isLogin ? "/auth" : "/register";
+      console.log(formData.email);
+      console.log(formData.password);
 
-      // build payload differently for login vs register
-      const payload = isLogin
-        ? {
-            email: formData.email,
-            password: formData.password,
-            privatekey: formData.privatekey,
-          }
-        : {
-            name: formData.name,
-            email: formData.email,
-            password: formData.password,
-          };
-
-      const response = await axios.post(
-        `http://localhost:5000/api/user${endpoint}`,
-        payload,
-        { withCredentials: true }
-      );
+      const response = await fetch(`http://localhost:5000/v1${endpoint}`, {
+      	method: 'POST',
+      	body:JSON.stringify({
+      		"email":`${formData.email}`,
+      		"password":`${formData.password}`
+      	})
+      });
 
       const data = response.data;
 
       if (data.success) {
         if (isLogin) {
-          // Save user info to localStorage for other components to use
           localStorage.setItem('user', JSON.stringify(data.user));
           setIsLoggedIn(true);
           navigate("/upload"); // redirect to protected page
@@ -134,7 +124,6 @@ const LoginRegisterPage = ({ setIsLoggedIn }) => {
                   placeholder="Private Key"
                   value={formData.privatekey}
                   onChange={handleChange}
-                  required
                 />
               )}
               <button type="submit">{isLogin ? "Login" : "Register"}</button>
