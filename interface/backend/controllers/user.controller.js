@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import crypto from 'crypto';
 import { createToken, verifyToken } from "../services/auth.js";
 import { createResponse } from "../crossResponse.js";
+import axios from "axios";
 
 const register = async (req, res) => {
     try {
@@ -23,13 +24,24 @@ const register = async (req, res) => {
         }
 
         const hashPassword = await bcrypt.hash(password, 10);
-        const userId = crypto.randomBytes(10).toString('hex');
+        const UUID = crypto.randomUUID();
+
+        // Register UUID with the blockchain and get an access key
+        const blockchainResponse = await axios.post('http://localhost:3000/api/register', { uuid: UUID });
+        
+        if (!blockchainResponse.data || !blockchainResponse.data.key) {
+            return res.status(500).json({
+                success: false,
+                message: "Failed to register user with the blockchain registry."
+            });
+        }
 
         const newUser = new User({
             name,
             email,
             password: hashPassword,
-            userid: userId,
+            userid: UUID,
+            privatekey: blockchainResponse.data.key,
         })
         const savedUser = await newUser.save();
 
