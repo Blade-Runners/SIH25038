@@ -5,6 +5,7 @@ function UploadForm() {
   const [formData, setFormData] = useState({
     name: '',
     location: '',
+    address: '',
     image: null,
   });
 
@@ -12,7 +13,7 @@ function UploadForm() {
   const [isLocating, setIsLocating] = useState(true);
   const [locationError, setLocationError] = useState(null);
 
-  // 📍 Get Live Location on Mount
+  //Get Live Location on Mount
   useEffect(() => {
     if (navigator.geolocation) {
       const watchId = navigator.geolocation.watchPosition(
@@ -33,7 +34,7 @@ function UploadForm() {
         }
       );
 
-      // Cleanup location watch on unmount
+      // Cleanup location
       return () => navigator.geolocation.clearWatch(watchId);
     } else {
       setLocationError('Geolocation is not supported by your browser.');
@@ -41,7 +42,7 @@ function UploadForm() {
     }
   }, []);
 
-  // 📤 Handle input changes
+  //Handle input changes
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     if (name === 'image') {
@@ -53,11 +54,11 @@ function UploadForm() {
     }
   };
 
-  // ✅ Handle form submission
+  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
     alert('Form submitted! (Prototype only)');
-    console.log(formData);
+    console.log(formData); // Log all form data, including address
 
     // Reset form
     setFormData({ name: '', location: '', image: null });
@@ -92,6 +93,17 @@ function UploadForm() {
         {locationError && (
           <p className="location-error">{locationError}</p>
         )}
+
+        <label>
+          Address:
+          <input
+            type="text"
+            name="address"
+            value={formData.address}
+            onChange={handleChange}
+            required
+          />
+        </label>
 
         <label>
           Upload Image:
