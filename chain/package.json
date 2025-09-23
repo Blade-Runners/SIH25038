@@ -1,28 +1,15 @@
 {
-  "name": "blue-carbon-mrv",
+  "name": "blockchain_registry_js",
   "version": "1.0.0",
-  "description": "Blockchain-powered Monitoring, Reporting, and Verification system for blue carbon ecosystem restoration",
+  "description": "Blockchain-powered registry in pure Node.js",
+  "main": "index.js",
   "type": "module",
-  "main": "src/api/server.js",
   "scripts": {
-    "start": "node src/api/server.js",
-    "peer": "node peers/peer-node.js",
-    "test": "node --test src/tests/*.test.js",
-    "dev": "node --watch src/api/server.js"
+    "start": "node index.js",
+    "dev": "node --watch index.js"
   },
-  "keywords": [
-    "blockchain",
-    "carbon-credits",
-    "blue-carbon",
-    "mrv",
-    "p2p",
-    "websocket"
-  ],
-  "author": "BC Team",
-  "license": "MIT",
-  "engines": {
-    "node": ">=18.0.0"
-  },
+  "author": "xpert0",
+  "license": "Apache-2.0",
   "dependencies": {
     "ws": "^8.18.3"
   }

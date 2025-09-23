@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Blockchain Registry API Documentation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark light">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav>
+    <div class="logo">Blockchain Registry API</div>
+    <ul>
+      <li><a href="#endpoints">Endpoints</a></li>
+      <li><a href="#data-format">Data Format</a></li>
+      <li><a href="#validation">Validation</a></li>
+      <li><a href="#credits">Credits</a></li>
+    </ul>
+  </nav>
+  <main>
+    <section class="intro">
+      <h1>Blockchain Registry API Documentation</h1>
+      <p>
+        Blockchain-powered registry with peer-to-peer validation and tokenized credits.<br>
+        RESTful API for registering, submitting, and retrieving validated data.
+      </p>
+    </section>
+
+    <section id="endpoints">
+      <h2>API Endpoints</h2>
+
+      <!-- /api/register -->
+      <div class="endpoint-card" id="register">
+        <div class="endpoint-header">
+          <span class="method badge post">POST</span>
+          <span class="endpoint-url">/api/register</span>
+        </div>
+        <p>Register a new UUID and get an access key.</p>
+        <div class="endpoint-code">
+          <strong>Request:</strong>
+          <pre>{
+  "uuid": "your-uuid-here"
+}</pre>
+          <strong>Response:</strong>
+          <pre>{
+  "uuid": "your-uuid-here",
+  "key": "generated-access-key"
+}</pre>
+        </div>
+        <div class="curl-examples">
+          <div class="curl-tabs">
+            <span class="curl-tab tab-linux active" onclick="showCurl('linux', 'register')">Linux/Mac</span>
+            <span class="curl-tab tab-windows" onclick="showCurl('windows', 'register')">Windows</span>
+          </div>
+          <div class="curl-content curl-linux active">
+            <button class="copy-btn" onclick="copyCurl('register-linux')">Copy</button>
+            <pre id="register-linux">curl -X POST http://localhost:8080/api/register \
+  -H "Content-Type: application/json" \
+  -d '{"uuid": "12345678-1234-1234-1234-123456789abc"}'</pre>
+          </div>
+          <div class="curl-content curl-windows">
+            <button class="copy-btn" onclick="copyCurl('register-windows')">Copy</button>
+            <pre id="register-windows">curl -X POST http://localhost:8080/api/register -H "Content-Type: application/json" -d "{\"uuid\": \"12345678-1234-1234-1234-123456789abc\"}"</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- /api/submit -->
+      <div class="endpoint-card" id="submit">
+        <div class="endpoint-header">
+          <span class="method badge post">POST</span>
+          <span class="endpoint-url">/api/submit</span>
+        </div>
+        <p>Submit data for validation on the blockchain.</p>
+        <div class="endpoint-code">
+          <strong>Request:</strong>
+          <pre>{
+  "uuid": "your-uuid-here",
+  "key": "your-access-key",
+  "data": {
+    "location": { "latitude": 12.345, "longitude": 67.890 },
+    "area": 1000,
+    "shape": "rectangle",
+    "type": "restoration",
+    "speciesData": ["Mangrove", "Seagrass"]
+  }
+}</pre>
+          <strong>Response:</strong>
+          <pre>{
+  "submissionId": "generated-submission-id",
+  "status": "waiting" | "validated",
+  "preValidated": true
+}</pre>
+        </div>
+        <div class="curl-examples">
+          <div class="curl-tabs">
+            <span class="curl-tab tab-linux active" onclick="showCurl('linux', 'submit')">Linux/Mac</span>
+            <span class="curl-tab tab-windows" onclick="showCurl('windows', 'submit')">Windows</span>
+          </div>
+          <div class="curl-content curl-linux active">
+            <button class="copy-btn" onclick="copyCurl('submit-linux')">Copy</button>
+            <pre id="submit-linux">curl -X POST http://localhost:8080/api/submit \
+  -H "Content-Type: application/json" \
+  -d '{
+    "uuid": "12345678-1234-1234-1234-123456789abc",
+    "key": "your-access-key",
+    "data": {
+      "location": { "latitude": 12.345, "longitude": 67.890 },
+      "area": 1000,
+      "shape": "rectangle",
+      "type": "restoration",
+      "speciesData": ["Mangrove", "Seagrass"]
+    }
+  }'</pre>
+          </div>
+          <div class="curl-content curl-windows">
+            <button class="copy-btn" onclick="copyCurl('submit-windows')">Copy</button>
+            <pre id="submit-windows">curl -X POST http://localhost:8080/api/submit -H "Content-Type: application/json" -d "{\"uuid\": \"12345678-1234-1234-1234-123456789abc\", \"key\": \"your-access-key\", \"data\": { \"location\": { \"latitude\": 12.345, \"longitude\": 67.890 }, \"area\": 1000, \"shape\": \"rectangle\", \"type\": \"restoration\", \"speciesData\": [\"Mangrove\", \"Seagrass\"] } }"</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- /api/data -->
+      <div class="endpoint-card" id="data">
+        <div class="endpoint-header">
+          <span class="method badge get">GET</span>
+          <span class="endpoint-url">/api/data</span>
+        </div>
+        <p>Get all finalized data submissions.</p>
+        <div class="endpoint-code">
+          <strong>Response:</strong>
+          <pre>{
+  "data": [
+    {
+      "submissionId": "submission-id",
+      "uuid": "submitter-uuid",
+      "data": { ... },
+      "credits": 1,
+      "timestamp": 1234567890,
+      "blockIndex": 1
+    }
+  ],
+  "count": 1
+}</pre>
+        </div>
+        <div class="curl-examples">
+          <div class="curl-tabs">
+            <span class="curl-tab tab-linux active" onclick="showCurl('linux', 'data')">Linux/Mac</span>
+            <span class="curl-tab tab-windows" onclick="showCurl('windows', 'data')">Windows</span>
+          </div>
+          <div class="curl-content curl-linux active">
+            <button class="copy-btn" onclick="copyCurl('data-linux')">Copy</button>
+            <pre id="data-linux">curl -X GET http://localhost:8080/api/data</pre>
+          </div>
+          <div class="curl-content curl-windows">
+            <button class="copy-btn" onclick="copyCurl('data-windows')">Copy</button>
+            <pre id="data-windows">curl -X GET http://localhost:8080/api/data</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- /api/pool -->
+      <div class="endpoint-card" id="pool">
+        <div class="endpoint-header">
+          <span class="method badge get">GET</span>
+          <span class="endpoint-url">/api/pool</span>
+        </div>
+        <p>Get all submissions currently in the validation pool.</p>
+        <div class="endpoint-code">
+          <strong>Response:</strong>
+          <pre>{
+  "pool": [
+    {
+      "submissionId": "submission-id",
+      "uuid": "submitter-uuid",
+      "data": { ... },
+      "status": "waiting" | "validated" | "rejected",
+      "timestamp": 1234567890,
+      "validators": 2,
+      "peers": 1
+    }
+  ],
+  "count": 1
+}</pre>
+        </div>
+        <div class="curl-examples">
+          <div class="curl-tabs">
+            <span class="curl-tab tab-linux active" onclick="showCurl('linux', 'pool')">Linux/Mac</span>
+            <span class="curl-tab tab-windows" onclick="showCurl('windows', 'pool')">Windows</span>
+          </div>
+          <div class="curl-content curl-linux active">
+            <button class="copy-btn" onclick="copyCurl('pool-linux')">Copy</button>
+            <pre id="pool-linux">curl -X GET http://localhost:8080/api/pool</pre>
+          </div>
+          <div class="curl-content curl-windows">
+            <button class="copy-btn" onclick="copyCurl('pool-windows')">Copy</button>
+            <pre id="pool-windows">curl -X GET http://localhost:8080/api/pool</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- /api/chain -->
+      <div class="endpoint-card" id="chain">
+        <div class="endpoint-header">
+          <span class="method badge get">GET</span>
+          <span class="endpoint-url">/api/chain</span>
+        </div>
+        <p>Get overview of blockchain state.</p>
+        <div class="endpoint-code">
+          <strong>Response:</strong>
+          <pre>{
+  "stats": {
+    "blockCount": 10,
+    "totalTransactions": 5,
+    "registeredUuids": 3,
+    "validationPoolSize": 1,
+    "totalCreditsIssued": 5
+  },
+  "peers": {
+    "connected": 2,
+    "total": 3,
+    "details": []
+  },
+  "config": { ... }
+}</pre>
+        </div>
+        <div class="curl-examples">
+          <div class="curl-tabs">
+            <span class="curl-tab tab-linux active" onclick="showCurl('linux', 'chain')">Linux/Mac</span>
+            <span class="curl-tab tab-windows" onclick="showCurl('windows', 'chain')">Windows</span>
+          </div>
+          <div class="curl-content curl-linux active">
+            <button class="copy-btn" onclick="copyCurl('chain-linux')">Copy</button>
+            <pre id="chain-linux">curl -X GET http://localhost:8080/api/chain</pre>
+          </div>
+          <div class="curl-content curl-windows">
+            <button class="copy-btn" onclick="copyCurl('chain-windows')">Copy</button>
+            <pre id="chain-windows">curl -X GET http://localhost:8080/api/chain</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- /api/credits -->
+      <div class="endpoint-card" id="credits">
+        <div class="endpoint-header">
+          <span class="method badge post">POST</span>
+          <span class="endpoint-url">/api/credits</span>
+        </div>
+        <p>Get credit balance and history for a UUID.</p>
+        <div class="endpoint-code">
+          <strong>Request:</strong>
+          <pre>{
+  "uuid": "your-uuid-here"
+}</pre>
+          <strong>Response:</strong>
+          <pre>{
+  "uuid": "your-uuid-here",
+  "balance": 5,
+  "history": [
+    {
+      "amount": 1,
+      "timestamp": 1234567890,
+      "type": "reward"
+    }
+  ]
+}</pre>
+        </div>
+        <div class="curl-examples">
+          <div class="curl-tabs">
+            <span class="curl-tab tab-linux active" onclick="showCurl('linux', 'credits')">Linux/Mac</span>
+            <span class="curl-tab tab-windows" onclick="showCurl('windows', 'credits')">Windows</span>
+          </div>
+          <div class="curl-content curl-linux active">
+            <button class="copy-btn" onclick="copyCurl('credits-linux')">Copy</button>
+            <pre id="credits-linux">curl -X POST http://localhost:8080/api/credits \
+  -H "Content-Type: application/json" \
+  -d '{"uuid": "12345678-1234-1234-1234-123456789abc"}'</pre>
+          </div>
+          <div class="curl-content curl-windows">
+            <button class="copy-btn" onclick="copyCurl('credits-windows')">Copy</button>
+            <pre id="credits-windows">curl -X POST http://localhost:8080/api/credits -H "Content-Type: application/json" -d "{\"uuid\": \"12345678-1234-1234-1234-123456789abc\"}"</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- /api/submission -->
+      <div class="endpoint-card" id="submission">
+        <div class="endpoint-header">
+          <span class="method badge post">POST</span>
+          <span class="endpoint-url">/api/submission</span>
+        </div>
+        <p>Get details about a specific submission.</p>
+        <div class="endpoint-code">
+          <strong>Request:</strong>
+          <pre>{
+  "submissionId": "submission-id-here"
+}</pre>
+          <strong>Response:</strong>
+          <pre>{
+  "submissionId": "submission-id",
+  "uuid": "submitter-uuid",
+  "data": { ... },
+  "status": "waiting" | "validated" | "rejected",
+  "timestamp": 1234567890,
+  "credits": 1,
+  "blockIndex": 1,
+  "inValidationPool": false
+}</pre>
+        </div>
+        <div class="curl-examples">
+          <div class="curl-tabs">
+            <span class="curl-tab tab-linux active" onclick="showCurl('linux', 'submission')">Linux/Mac</span>
+            <span class="curl-tab tab-windows" onclick="showCurl('windows', 'submission')">Windows</span>
+          </div>
+          <div class="curl-content curl-linux active">
+            <button class="copy-btn" onclick="copyCurl('submission-linux')">Copy</button>
+            <pre id="submission-linux">curl -X POST http://localhost:8080/api/submission \
+  -H "Content-Type: application/json" \
+  -d '{"submissionId": "sub_abc123xyz"}'</pre>
+          </div>
+          <div class="curl-content curl-windows">
+            <button class="copy-btn" onclick="copyCurl('submission-windows')">Copy</button>
+            <pre id="submission-windows">curl -X POST http://localhost:8080/api/submission -H "Content-Type: application/json" -d "{\"submissionId\": \"sub_abc123xyz\"}"</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="data-format">
+      <h2>Data Format</h2>
+      <div class="endpoint-code">
+        <pre>{
+  "location": { "latitude": 12.345, "longitude": 67.890 },
+  "area": 1000,
+  "shape": "rectangle",
+  "type": "restoration",
+  "speciesData": [ "Mangrove", "Seagrass" ]
+}</pre>
+      </div>
+    </section>
+
+    <section id="validation">
+      <h2>Validation Process</h2>
+      <ol>
+        <li>Data is submitted via <code>/api/submit</code></li>
+        <li>If not from privileged UUID, goes to validation pool</li>
+        <li>Other peers validate by submitting similar data</li>
+        <li>If thresholds met within timeout, data is validated and added to blockchain</li>
+        <li>Credits awarded to original submitter (3) and validators (0.33 each)</li>
+      </ol>
+    </section>
+
+    <section id="credits">
+      <h2>Credits</h2>
+      <p>
+        Credits are issued for validated submissions and successful validations.<br>
+        Check your balance and history via <code>/api/credits</code>.
+      </p>
+    </section>
+  </main>
+  <footer>
+    <div>Blockchain Registry v1.0.0 &mdash; Built with ESM JS</div>
+    <div>Theme inspired by <a href="https://docs.xpert0.in/ai" target="_blank">docs.xpert0.in/ai</a></div>
+  </footer>
+  <script src="script.js"></script>
+</body>
+</html>

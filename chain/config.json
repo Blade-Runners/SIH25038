@@ -1,11 +1,12 @@
 {
-  "saveInterval": 120000,
+  "chain":"data",
+  "saveInterval": 120,
   "subnetMask": 24,
   "sim_thres": 0.85,
-  "timeout": 300,
-  "port": 3001,
+  "val_timeout": 300,
+  "port": 3000,
   "p2p": 3002,
-  "privilegedUuid": "DASHBOARD",
+  "privilegedUuid": "0199431c-f56e-7500-a965-2d0b2659bc7f",
   "uuid_val_thres": 0.67,
   "peer_val_thres": 0.33
 }
