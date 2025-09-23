@@ -1,25 +1,30 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import './UploadForm.css';
 
 function UploadForm() {
   const [formData, setFormData] = useState({
-    name: '',
-    location: '',
-    address: '',
-    image: null,
+    location: { latitude: '', longitude: '' },
+    area: '',
+    shape: 'rectangle',
+    type: 'restoration',
+    speciesData: 'Mangrove',
   });
 
-  const [preview, setPreview] = useState(null);
   const [isLocating, setIsLocating] = useState(true);
   const [locationError, setLocationError] = useState(null);
+  const [submissionStatus, setSubmissionStatus] = useState({ message: '', type: '' });
 
   //Get Live Location on Mount
   useEffect(() => {
     if (navigator.geolocation) {
-      const watchId = navigator.geolocation.watchPosition(
+      navigator.geolocation.getCurrentPosition(
         (position) => {
-          const coords = `${position.coords.latitude}, ${position.coords.longitude}`;
-          setFormData((prev) => ({ ...prev, location: coords }));
+          const { latitude, longitude } = position.coords;
+          setFormData((prev) => ({
+            ...prev,
+            location: { latitude: latitude.toFixed(5), longitude: longitude.toFixed(5) },
+          }));
           setIsLocating(false);
         },
         (error) => {
@@ -34,95 +39,144 @@ function UploadForm() {
         }
       );
 
-      // Cleanup location
-      return () => navigator.geolocation.clearWatch(watchId);
     } else {
       setLocationError('Geolocation is not supported by your browser.');
       setIsLocating(false);
     }
   }, []);
 
-  //Handle input changes
   const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    if (name === 'image') {
-      const file = files[0];
-      setFormData({ ...formData, image: file });
-      setPreview(URL.createObjectURL(file));
+    const { name, value } = e.target;
+    if (name === 'latitude' || name === 'longitude') {
+      setFormData({
+        ...formData,
+        location: { ...formData.location, [name]: value },
+      });
     } else {
       setFormData({ ...formData, [name]: value });
     }
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert('Form submitted! (Prototype only)');
-    console.log(formData); // Log all form data, including address
+    setSubmissionStatus({ message: 'Submitting...', type: 'info' });
 
-    // Reset form
-    setFormData({ name: '', location: '', image: null });
-    setPreview(null);
+    // NOTE: In a real app, user details should come from a secure context/storage
+    // For now, we'll assume they are in localStorage after login.
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user || !user.userid || !user.privatekey) {
+      setSubmissionStatus({ message: 'Error: You must be logged in to submit.', type: 'error' });
+      return;
+    }
+
+    const payload = {
+      uuid: user.userid,
+      key: user.privatekey,
+      data: {
+        location: {
+          latitude: parseFloat(formData.location.latitude),
+          longitude: parseFloat(formData.location.longitude),
+        },
+        area: parseInt(formData.area, 10),
+        shape: formData.shape,
+        type: formData.type,
+        speciesData: formData.speciesData.split(',').map(s => s.trim()),
+      },
+    };
+
+    try {
+      // The blockchain server runs on port 3000
+      const response = await axios.post('http://localhost:3000/api/submit', payload);
+      console.log('Submission successful:', response.data);
+      setSubmissionStatus({ message: `Submission successful! ID: ${response.data.submissionId}`, type: 'success' });
+    } catch (error) {
+      console.error('Submission error:', error);
+      const errorMessage = error.response?.data?.error || 'An unknown error occurred.';
+      setSubmissionStatus({ message: `Submission failed: ${errorMessage}`, type: 'error' });
+    }
   };
 
   return (
     <div className="form-container">
-      <h2>Upload Mangrove Planting Photo</h2>
+      <h2>Submit Project Data</h2>
       <form onSubmit={handleSubmit}>
         <label>
-          Your Name:
+          Location (Latitude): <span className="location-status">{isLocating ? 'Fetching...' : '✅'}</span>
           <input
             type="text"
-            name="name"
-            value={formData.name}
+            name="latitude"
+            value={formData.location.latitude}
             onChange={handleChange}
+            placeholder="e.g., 21.9497"
             required
           />
         </label>
 
         <label>
-          Location: <span className="location-status">{isLocating ? 'Fetching location...' : ''}</span>
+          Location (Longitude):
           <input
             type="text"
-            name="location"
-            value={formData.location}
+            name="longitude"
+            value={formData.location.longitude}
             onChange={handleChange}
+            placeholder="e.g., 89.1833"
             required
           />
         </label>
-        {locationError && (
-          <p className="location-error">{locationError}</p>
-        )}
+        {locationError && <p className="location-error">{locationError}</p>}
 
         <label>
-          Address:
+          Area (in square meters):
+          <input
+            type="number"
+            name="area"
+            value={formData.area}
+            onChange={handleChange}
+            placeholder="e.g., 1000"
+            required
+          />
+        </label>
+
+        <label>
+          Shape:
+          <select name="shape" value={formData.shape} onChange={handleChange}>
+            <option value="rectangle">Rectangle</option>
+            <option value="polygon">Polygon</option>
+            <option value="circle">Circle</option>
+          </select>
+        </label>
+
+        <label>
+          Project Type:
+          <select name="type" value={formData.type} onChange={handleChange}>
+            <option value="restoration">Restoration</option>
+            <option value="conservation">Conservation</option>
+            <option value="new_planting">New Planting</option>
+          </select>
+        </label>
+
+        <label>
+          Species (comma-separated):
           <input
             type="text"
-            name="address"
-            value={formData.address}
+            name="speciesData"
+            value={formData.speciesData}
             onChange={handleChange}
+            placeholder="e.g., Mangrove, Seagrass"
             required
           />
         </label>
-
-        <label>
-          Upload Image:
-          <input
-            type="file"
-            name="image"
-            accept="image/*"
-            onChange={handleChange}
-            required
-          />
-        </label>
-
-        {preview && (
-          <img src={preview} alt="Preview" className="preview" />
-        )}
 
         <button type="submit" disabled={isLocating}>
           {isLocating ? 'Please wait...' : 'Submit'}
         </button>
+
+        {submissionStatus.message && (
+          <p className={`submission-status ${submissionStatus.type}`}>
+            {submissionStatus.message}
+          </p>
+        )}
       </form>
     </div>
   );

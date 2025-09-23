@@ -119,6 +119,8 @@ const login = async (req, res) => {
             user: {
                 name: user.name,
                 email: user.email,
+                userid: user.userid,
+                privatekey: user.privatekey,
             }
         })
 

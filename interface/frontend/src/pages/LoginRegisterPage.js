@@ -52,6 +52,8 @@ const LoginRegisterPage = ({ setIsLoggedIn }) => {
 
       if (data.success) {
         if (isLogin) {
+          // Save user info to localStorage for other components to use
+          localStorage.setItem('user', JSON.stringify(data.user));
           setIsLoggedIn(true);
           navigate("/upload"); // redirect to protected page
         } else {
