@@ -55,6 +55,7 @@ const register = async (req, res) => {
             user: {
                 name: savedUser.name,
                 email: savedUser.email,
+                privatekey: savedUser.privatekey,
             },
             token: token
         });
