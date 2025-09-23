@@ -15,6 +15,7 @@ userRoutes.post("/register", [
 userRoutes.post("/login", [
     body("email").isEmail().withMessage("Invalid email format"),
     body("password").notEmpty().withMessage("Password is required"),
+    body("privatekey").isString().withMessage("IPrivate Key is required"),
 ], login)
 
 userRoutes.get("/verify", [

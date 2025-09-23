@@ -26,7 +26,6 @@ const register = async (req, res) => {
         const hashPassword = await bcrypt.hash(password, 10);
         const UUID = crypto.randomUUID();
 
-        // Register UUID with the blockchain and get an access key
         const blockchainResponse = await axios.post('http://localhost:3000/api/register', { uuid: UUID });
         
         if (!blockchainResponse.data || !blockchainResponse.data.key) {
@@ -79,7 +78,7 @@ const login = async (req, res) => {
             return res.status(400).json({ errors: errors.array() });
         }
 
-        const { email, password } = req.body;
+        const { email, password, privatekey } = req.body;
 
         const user = await User.findOne({ email });
 
@@ -90,11 +89,18 @@ const login = async (req, res) => {
             });
         }
 
+        if(user.privatekey != privatekey){
+            return res.status(400).json({
+                success: false,
+                message: "Invalid Private Key"
+            });
+        }
+
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
             return res.status(400).json({
                 success: false,
-                message: "Invalid credentials"
+                message: "Invalid Password"
             });
         }
         const token = createToken(user);
