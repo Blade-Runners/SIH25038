@@ -1,30 +1,151 @@
-import dotenv from "dotenv";
-dotenv.config();
-import express from "express";
-import cors from "cors";
-import connectDB from "./database/db.js";
-import cookieParser from "cookie-parser";
-import userRoutes from "./routes/user.route.js";
+import { db } from './db.js';
+import crypto from 'crypto';
 
-const app = express();
-const PORT = process.env.PORT || 5000;
+export default {
+	async fetch(request, env) {
+		const origin = request.headers.get('Origin');
+		const allowedOrigins = ['null', 'http://localhost:3000', 'http://localhost'];
+		if (request.method === 'OPTIONS') {
+			return new Response(null, {
+				status: 204,
+				headers: {
+					'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+					'Access-Control-Allow-Headers': 'Content-Type',
+					'Access-Control-Allow-Credentials': 'true',
+					'Access-Control-Allow-Origin': allowedOrigins.includes(origin) ? origin : '',
+				},
+			});
+		}
 
-connectDB();
+		const url = new URL(request.url);
+		const path = url.pathname;
+		const pathParts = path.split('/').filter(Boolean);
+		function getHeaders() {
+			const headers = {
+				'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+				'Access-Control-Allow-Headers': 'Content-Type',
+				'Access-Control-Allow-Credentials': 'true',
+			};
+			if (allowedOrigins.includes(origin)) {
+				headers['Access-Control-Allow-Origin'] = origin;
+			}
+			return headers;
+		}
 
+		async function register() {
+			const requestBody = await request.json();
+			const email = requestBody.email;
+			const passhash = crypto.hash('sha512',requestBody.password);
+			let check = db.prepare('SELECT EXISTS (SELECT 1 FROM users WHERE email = ?) AS chk').bind(email).get();
+			if (check.chk) {
+				return new Response(JSON.stringify({ error: 'Email already exists' }), {
+					status: 401,
+					headers: { ...getHeaders() },
+				});
+			}
+			let uuid = crypto.randomUUID();
+			console.log(uuid);
+			const res = await fetch('http://localhost:3001/api/register', {
+		      method: 'POST',
+		      body: JSON.stringify({ uuid })
+		    });
+		    const key=await res.json();
+		    console.log(uuid);
+			db.prepare('INSERT INTO users (uuid,email,passhash,key) VALUES (?,?,?,?);').bind(uuid, email, passhash,key.key).run();
+			console.log(uuid);
+			return new Response(JSON.stringify({message: "Registration Successful"}), {
+				status: 200,
+				headers: {
+					...getHeaders(),
+					'Set-Cookie': `uuid=${uuid}; Path=/; SameSite=none; secure; Partitioned; Max-Age=86400`,
+				},
+			});
+		}
 
-app.use(express.json());
-app.use(cookieParser());
-app.use(cors({
-    origin: "http://localhost:3001",
-    credentials: true,}));
-app.use(express.urlencoded({ extended: true }));
+		async function login() {
+			const requestBody = await request.json();
+			const email = requestBody.email;
+			const passhash = crypto.hash('sha512',requestBody.password);
+			let check = db.prepare('SELECT EXISTS (SELECT 1 FROM users WHERE email = ?) AS chk').bind(email).get();
+			if (check.chk) {
+				let uuid = db.prepare('SELECT uuid FROM users WHERE email = ? AND passhash = ?').bind(email, passhash).get();
+				console.log(uuid);
+				if (!uuid) {
+					return new Response(JSON.stringify({ message: 'Invalid credentials' }), {
+						status: 401,
+						headers: { ...getHeaders() },
+					});
+				}
+				console.log(uuid);
+				return new Response(JSON.stringify({ message: 'Login success' }), {
+					status: 200,
+					headers: {
+						...getHeaders(),
+						'Set-Cookie': `uuid=${uuid.uuid}; Path=/; Partitioned; Max-Age=86400`,
+						// 'Set-Cookie': `uuid=${uuid.uuid}; Path=/; SameSite=none; secure; Partitioned; Max-Age=86400`,
+					},
+				});
+			}
+			return new Response(JSON.stringify({ message: 'Please Register first' }), {
+				status: 401,
+				headers: { ...getHeaders() },
+			});
+		}
 
-app.get('/', (req, res) => {
-    res.send('Hello World!');
-});
+		async function logout() {
+			return new Response(JSON.stringify({ message: 'Logout successful' }), {
+				status: 200,
+				headers: {
+					...getHeaders(),
+					'Set-Cookie': `uuid=; HttpOnly; Path=/; Partitioned; Expires=Thu, 01 Jan 1970 00:00:00 GMT`,
+				},
+			});
+		}
 
-app.use("/api/user", userRoutes);
+		async function submitData() {
+			const cookieHeader = request.headers.get('Cookie');
+			if (!cookieHeader) {
+				console.log("no cookie");
+				return new Response(JSON.stringify({ message: 'Not authenticated' }), {
+					status: 401,
+					headers: { ...getHeaders() },
+				});
+			}
+			const cookies = Object.fromEntries(cookieHeader.split('; ').map((c) => c.split('=')));
+			if (!cookies.uuid) {
+				return new Response(JSON.stringify({ message: 'UUID not found' }), {
+					status: 401,
+					headers: { ...getHeaders() },
+				});
+			} else {
+				const data = await request.json();
+				const key = db.prepare('SELECT key FROM users WHERE uuid = ?').bind(cookies.uuid).get();
+				const res = await fetch('http://localhost:3001/api/submit', {
+			      method: 'POST',
+			      body: JSON.stringify({
+			      	uuid:`${cookies.uuid}`,
+			      	key:`${key.key}`,
+			      	data
+			      })
+			    });
+			    const subres=await res.json();
 
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+				return new Response(JSON.stringify(subres), {
+					status: 200,
+					headers: { ...getHeaders() },
+				});
+			}
+		}
+
+		if (pathParts[0] === 'v1') {
+			if (pathParts[1] === 'submit') return submitData();
+			if (pathParts[1] === 'register') return register();
+			if (pathParts[1] === 'auth') return login();
+			if (pathParts[1] === 'logout') return logout();
+		}
+		return new Response(JSON.stringify({ message: 'Bad Request' }), {
+			status: 400,
+			headers: { ...getHeaders() },
+		});
+	},
+};

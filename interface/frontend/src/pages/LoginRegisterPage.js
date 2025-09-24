@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import "./LoginRegisterPage.css";
 
 const LoginRegisterPage = ({ setIsLoggedIn }) => {
@@ -9,7 +8,6 @@ const LoginRegisterPage = ({ setIsLoggedIn }) => {
     name: "",
     email: "",
     password: "",
-    privatekey: "",
   });
   const [error, setError] = useState("");
   const [registrationKey, setRegistrationKey] = useState(null);
@@ -27,40 +25,20 @@ const LoginRegisterPage = ({ setIsLoggedIn }) => {
     setRegistrationKey(null);
 
     try {
-      const endpoint = isLogin ? "/login" : "/register";
+      const endpoint = isLogin ? "/auth" : "/register";
+      const response = await fetch(`http://localhost:5000/v1${endpoint}`, {
+      	method: 'POST',
+      	body:JSON.stringify({
+      		"email":`${formData.email}`,
+      		"password":`${formData.password}`
+      	})
+      });
 
-      // build payload differently for login vs register
-      const payload = isLogin
-        ? {
-            email: formData.email,
-            password: formData.password,
-            privatekey: formData.privatekey,
-          }
-        : {
-            name: formData.name,
-            email: formData.email,
-            password: formData.password,
-          };
-
-      const response = await axios.post(
-        `http://localhost:5000/api/user${endpoint}`,
-        payload,
-        { withCredentials: true }
-      );
-
-      const data = response.data;
-
-      if (data.success) {
-        if (isLogin) {
-          // Save user info to localStorage for other components to use
-          localStorage.setItem('user', JSON.stringify(data.user));
+      if (response.ok) {
           setIsLoggedIn(true);
-          navigate("/upload"); // redirect to protected page
-        } else {
-          setRegistrationKey(data.user.privatekey); // show private key
-        }
+          navigate("/upload");
       } else {
-        setError(data.message || "Something went wrong");
+        setError(response.message || "Something went wrong");
       }
     } catch (err) {
       setError(
@@ -77,10 +55,10 @@ const LoginRegisterPage = ({ setIsLoggedIn }) => {
         {registrationKey ? (
           <div className="registration-success">
             <h3>Registration Successful!</h3>
-            <p>Please save your private key. You will need it to log in.</p>
-            <div className="private-key-box">
-              <code>{registrationKey}</code>
-            </div>
+            // <p>Please save your private key. You will need it to log in.</p>
+            // <div className="private-key-box">
+            //   <code>{registrationKey}</code>
+            // </div>
             <button
               onClick={() => {
                 setRegistrationKey(null);
@@ -127,16 +105,6 @@ const LoginRegisterPage = ({ setIsLoggedIn }) => {
                 required
               />
               
-              {isLogin && (
-                <input
-                  type="text"
-                  name="privatekey"
-                  placeholder="Private Key"
-                  value={formData.privatekey}
-                  onChange={handleChange}
-                  required
-                />
-              )}
               <button type="submit">{isLogin ? "Login" : "Register"}</button>
             </form>
 
