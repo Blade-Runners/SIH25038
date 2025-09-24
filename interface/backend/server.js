@@ -19,25 +19,6 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(response.status, Object.fromEntries(response.headers.entries()));
       const buffer = Buffer.from(await response.arrayBuffer());
       res.end(buffer);
-//   try {
-//     const url = new URL(req.url, `http://${req.headers.host}`);
-//     const body = await new Promise((resolve) => {
-//       let data = '';
-//       req.on('data', chunk => data += chunk);
-//       req.on('end', () => resolve(data));
-//     });
-// 
-//     const request = new Request(url, {
-//       method: req.method,
-//       headers: req.headers,
-//       body: ['GET','POST','HEAD'].includes(req.method) ? null : body
-//     });
-// 
-//     const response = await handler.fetch(request);
-// 
-//     res.writeHead(response.status, Object.fromEntries(response.headers.entries()));
-//     const responseBody = await response.arrayBuffer();
-//     res.end(Buffer.from(responseBody));
   } catch (err) {
   	console.log(err)
     res.writeHead(500);

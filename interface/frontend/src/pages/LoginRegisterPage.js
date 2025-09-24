@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import "./LoginRegisterPage.css";
 
 const LoginRegisterPage = ({ setIsLoggedIn }) => {
@@ -9,7 +8,6 @@ const LoginRegisterPage = ({ setIsLoggedIn }) => {
     name: "",
     email: "",
     password: "",
-    privatekey: "",
   });
   const [error, setError] = useState("");
   const [registrationKey, setRegistrationKey] = useState(null);
@@ -28,9 +26,6 @@ const LoginRegisterPage = ({ setIsLoggedIn }) => {
 
     try {
       const endpoint = isLogin ? "/auth" : "/register";
-      console.log(formData.email);
-      console.log(formData.password);
-
       const response = await fetch(`http://localhost:5000/v1${endpoint}`, {
       	method: 'POST',
       	body:JSON.stringify({
@@ -39,18 +34,11 @@ const LoginRegisterPage = ({ setIsLoggedIn }) => {
       	})
       });
 
-      const data = response.data;
-
-      if (data.success) {
-        if (isLogin) {
-          localStorage.setItem('user', JSON.stringify(data.user));
+      if (response.ok) {
           setIsLoggedIn(true);
-          navigate("/upload"); // redirect to protected page
-        } else {
-          setRegistrationKey(data.user.privatekey); // show private key
-        }
+          navigate("/upload");
       } else {
-        setError(data.message || "Something went wrong");
+        setError(response.message || "Something went wrong");
       }
     } catch (err) {
       setError(
@@ -67,10 +55,10 @@ const LoginRegisterPage = ({ setIsLoggedIn }) => {
         {registrationKey ? (
           <div className="registration-success">
             <h3>Registration Successful!</h3>
-            <p>Please save your private key. You will need it to log in.</p>
-            <div className="private-key-box">
-              <code>{registrationKey}</code>
-            </div>
+            // <p>Please save your private key. You will need it to log in.</p>
+            // <div className="private-key-box">
+            //   <code>{registrationKey}</code>
+            // </div>
             <button
               onClick={() => {
                 setRegistrationKey(null);
@@ -117,15 +105,6 @@ const LoginRegisterPage = ({ setIsLoggedIn }) => {
                 required
               />
               
-              {isLogin && (
-                <input
-                  type="text"
-                  name="privatekey"
-                  placeholder="Private Key"
-                  value={formData.privatekey}
-                  onChange={handleChange}
-                />
-              )}
               <button type="submit">{isLogin ? "Login" : "Register"}</button>
             </form>
 

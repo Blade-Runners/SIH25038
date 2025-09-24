@@ -61,19 +61,9 @@ function UploadForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmissionStatus({ message: 'Submitting...', type: 'info' });
-
-    // NOTE: In a real app, user details should come from a secure context/storage
-    // For now, we'll assume they are in localStorage after login.
     const user = JSON.parse(localStorage.getItem('user'));
-    if (!user || !user.userid || !user.privatekey) {
-      setSubmissionStatus({ message: 'Error: You must be logged in to submit.', type: 'error' });
-      return;
-    }
 
-    const payload = {
-      uuid: user.userid,
-      key: user.privatekey,
-      data: {
+    const data = {
         location: {
           latitude: parseFloat(formData.location.latitude),
           longitude: parseFloat(formData.location.longitude),
@@ -82,14 +72,19 @@ function UploadForm() {
         shape: formData.shape,
         type: formData.type,
         speciesData: formData.speciesData.split(',').map(s => s.trim()),
-      },
     };
 
     try {
-      // The blockchain server runs on port 3000
-      const response = await axios.post('http://localhost:3000/api/submit', payload);
-      console.log('Submission successful:', response.data);
-      setSubmissionStatus({ message: `Submission successful! ID: ${response.data.submissionId}`, type: 'success' });
+      const response = await fetch('http://localhost:5000/v1/submit',{
+		method: 'POST',
+      	body: JSON.stringify({ data }),
+      	credentials:'include',
+      });
+      
+      console.log('Submission successful:', response);
+      const res = await response.json();
+      console.log(res);
+      setSubmissionStatus({ message: `Submission successful! ID: ${res.submissionId}`, type: 'success' });
     } catch (error) {
       console.error('Submission error:', error);
       const errorMessage = error.response?.data?.error || 'An unknown error occurred.';

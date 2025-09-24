@@ -4,12 +4,13 @@ import crypto from 'crypto';
 export default {
 	async fetch(request, env) {
 		const origin = request.headers.get('Origin');
-		const allowedOrigins = ['https://dash.xpert0.in', 'null'];
+		const allowedOrigins = ['null', 'http://localhost:3000', 'http://localhost'];
 		if (request.method === 'OPTIONS') {
 			return new Response(null, {
 				status: 204,
 				headers: {
 					'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+					'Access-Control-Allow-Headers': 'Content-Type',
 					'Access-Control-Allow-Credentials': 'true',
 					'Access-Control-Allow-Origin': allowedOrigins.includes(origin) ? origin : '',
 				},
@@ -43,16 +44,20 @@ export default {
 				});
 			}
 			let uuid = crypto.randomUUID();
+			console.log(uuid);
 			const res = await fetch('http://localhost:3001/api/register', {
 		      method: 'POST',
 		      body: JSON.stringify({ uuid })
 		    });
-			db.prepare('INSERT INTO users (uuid,email,passhash,key) VALUES (?,?,?,?);').bind(uuid, email, passhash,res.key).run();
-			return new Response(JSON.stringify({ message: 'Registration successful' }), {
+		    const key=await res.json();
+		    console.log(uuid);
+			db.prepare('INSERT INTO users (uuid,email,passhash,key) VALUES (?,?,?,?);').bind(uuid, email, passhash,key.key).run();
+			console.log(uuid);
+			return new Response(JSON.stringify({message: "Registration Successful"}), {
 				status: 200,
 				headers: {
 					...getHeaders(),
-					'Set-Cookie': `uuid=${uuid}; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=86400`,
+					'Set-Cookie': `uuid=${uuid}; Path=/; SameSite=none; secure; Partitioned; Max-Age=86400`,
 				},
 			});
 		}
@@ -64,17 +69,20 @@ export default {
 			let check = db.prepare('SELECT EXISTS (SELECT 1 FROM users WHERE email = ?) AS chk').bind(email).get();
 			if (check.chk) {
 				let uuid = db.prepare('SELECT uuid FROM users WHERE email = ? AND passhash = ?').bind(email, passhash).get();
+				console.log(uuid);
 				if (!uuid) {
 					return new Response(JSON.stringify({ message: 'Invalid credentials' }), {
 						status: 401,
 						headers: { ...getHeaders() },
 					});
 				}
-				return new Response(JSON.stringify({ message: 'Login successful' }), {
+				console.log(uuid);
+				return new Response(JSON.stringify({ message: 'Login success' }), {
 					status: 200,
 					headers: {
 						...getHeaders(),
-						'Set-Cookie': `uuid=${uuid.uuid}; HttpOnly; Secure; SameSite=None; Path=/; Partitioned; Max-Age=86400`,
+						'Set-Cookie': `uuid=${uuid.uuid}; Path=/; Partitioned; Max-Age=86400`,
+						// 'Set-Cookie': `uuid=${uuid.uuid}; Path=/; SameSite=none; secure; Partitioned; Max-Age=86400`,
 					},
 				});
 			}
@@ -89,7 +97,7 @@ export default {
 				status: 200,
 				headers: {
 					...getHeaders(),
-					'Set-Cookie': `uuid=; HttpOnly; Secure; SameSite=None; Path=/; Partitioned; Expires=Thu, 01 Jan 1970 00:00:00 GMT`,
+					'Set-Cookie': `uuid=; HttpOnly; Path=/; Partitioned; Expires=Thu, 01 Jan 1970 00:00:00 GMT`,
 				},
 			});
 		}
@@ -97,6 +105,7 @@ export default {
 		async function submitData() {
 			const cookieHeader = request.headers.get('Cookie');
 			if (!cookieHeader) {
+				console.log("no cookie");
 				return new Response(JSON.stringify({ message: 'Not authenticated' }), {
 					status: 401,
 					headers: { ...getHeaders() },
@@ -110,17 +119,18 @@ export default {
 				});
 			} else {
 				const data = await request.json();
-				const key = db.prepare('SELECT key FROM users WHERE uuid = ?').bind(cookies.uuid).first();
+				const key = db.prepare('SELECT key FROM users WHERE uuid = ?').bind(cookies.uuid).get();
 				const res = await fetch('http://localhost:3001/api/submit', {
 			      method: 'POST',
 			      body: JSON.stringify({
-			      	"uuid":`${cookies.uuid}`,
-			      	"key":`${key.key}`,
+			      	uuid:`${cookies.uuid}`,
+			      	key:`${key.key}`,
 			      	data
 			      })
 			    });
+			    const subres=await res.json();
 
-				return new Response(JSON.stringify(res), {
+				return new Response(JSON.stringify(subres), {
 					status: 200,
 					headers: { ...getHeaders() },
 				});
