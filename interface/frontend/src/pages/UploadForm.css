@@ -1,111 +1,165 @@
-/* Container Styling */
+/* Container */
+
+.main-container {
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); /* dark gradient background */
+}
 .form-container {
-  background: #fff;
-  padding: 30px 25px;
-  margin: 50px auto;
-  max-width: 480px;
+  background-color: #1e1e2f; /* dark card background */
+  padding: 2rem 1.8rem;
+  margin: 40px auto;
+  max-width: 500px;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+  color: #f0f0f0;
+  text-align: center;
+  font-family: 'Segoe UI', sans-serif;
 }
 
 /* Title */
 .form-container h2 {
-  text-align: center;
-  color: #036c4c;
-  margin-bottom: 20px;
-  font-size: 22px;
+  margin-bottom: 1.5rem;
+  font-size: 1.9rem;
+  color: #d8b4fe; /* soft purple title */
+}
+
+/* Form Styling */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  text-align: left;
 }
 
 /* Labels */
 form label {
-  display: block;
-  margin-top: 16px;
   font-weight: 600;
-  color: #333;
-  font-size: 15px;
+  font-size: 0.95rem;
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
 }
 
-/* Inputs */
+/* Inputs & Selects */
 form input[type="text"],
-form input[type="file"] {
+form input[type="number"],
+form select {
   width: 100%;
-  padding: 12px 14px; /* proper padding */
-  margin-top: 6px;
-  border: 1px solid #ccc;
+  padding: 12px 14px;
+  border: 1px solid #555;
   border-radius: 8px;
-  font-size: 15px;
-  box-sizing: border-box; /* ensures padding doesn't overflow */
-  transition: border 0.2s ease, box-shadow 0.2s ease;
+  background-color: #2b2b3c;
+  color: #f0f0f0;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+  transition: border 0.25s ease, box-shadow 0.25s ease;
 }
 
-form input[type="text"]:focus,
-form input[type="file"]:focus {
+form input:focus,
+form select:focus {
   outline: none;
-  border-color: #036c4c;
-  box-shadow: 0 0 4px rgba(3, 108, 76, 0.3);
+  border-color: #c084fc;
+  box-shadow: 0 0 6px rgba(200, 132, 252, 0.4);
 }
 
-/* Image Preview */
-.preview {
-  margin-top: 18px;
-  max-width: 100%;
-  height: auto;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.08);
+/* Buttons inside labels (Get Coordinates) */
+form label button {
+  margin-top: 6px;
+  align-self: flex-start;
+  background-color: #8b5cf6;
+  color: #fff;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+form label button:hover {
+  background-color: #7c3aed;
+  transform: translateY(-1px);
 }
 
 /* Submit Button */
 button[type="submit"] {
-  margin-top: 25px;
+  margin-top: 1rem;
   width: 100%;
-  background-color: #036c4c;
-  color: white;
+  background-color: #a855f7; /* purple tone */
+  color: #fff;
   padding: 14px 0;
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 600;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.25s ease, transform 0.15s ease;
+  transition: all 0.3s ease;
 }
 
 button[type="submit"]:hover {
-  background-color: #024d38;
+  background-color: #7e22ce; /* darker purple hover */
+  transform: translateY(-2px);
 }
 
 button[type="submit"]:disabled {
-  background-color: #9fbfb5;
+  background-color: #6b21a8;
   cursor: not-allowed;
 }
 
-/* Location Status Text */
+/* Location Status */
 .location-status {
-  font-size: 13px;
-  color: #666;
+  font-size: 0.8rem;
+  color: #bbb;
   margin-left: 4px;
 }
 
-/* Location Error Text */
+/* Location Error */
 .location-error {
-  color: #c0392b;
-  font-size: 13px;
-  margin-top: 6px;
+  color: #f87171; /* soft red */
+  font-size: 0.8rem;
+  margin-top: 4px;
   font-style: italic;
 }
 
+/* Submission Status */
+.submission-status {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.submission-status.info {
+  color: #60a5fa;
+}
+.submission-status.success {
+  color: #34d399;
+}
+.submission-status.error {
+  color: #f87171;
+}
+
 /* Responsive */
-@media (max-width: 500px) {
+@media (max-width: 600px) {
   .form-container {
-    margin: 30px 15px;
-    padding: 25px 20px;
+    margin: 20px 15px;
+    padding: 1.8rem 1.5rem;
   }
 
   .form-container h2 {
-    font-size: 20px;
+    font-size: 1.7rem;
   }
 
   button[type="submit"] {
-    font-size: 15px;
+    font-size: 0.95rem;
+  }
+
+  form label button {
+    font-size: 0.8rem;
+    padding: 5px 10px;
   }
 }

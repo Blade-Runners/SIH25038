@@ -92,6 +92,15 @@ export class P2PNetwork {
       perMessageDeflate: false,
     });
 
+    this.server.on('error', (error) => {
+      if (error.code === 'EADDRINUSE') {
+        console.error(`P2P Error: Port ${this.config.p2p} is already in use. Please check if another instance of the application is running.`);
+        process.exit(1);
+      } else {
+        console.error('P2P server error:', error);
+      }
+    });
+
     this.server.on("connection", (ws, req) => {
       this.handleNewConnection(ws, req);
     });

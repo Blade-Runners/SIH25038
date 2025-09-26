@@ -5,9 +5,7 @@ dotenv.config();
 const mongoDBUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/bluecarbon';
 
 const connectDB = async () => {
-
     try {
-
         await mongoose.connect(mongoDBUri, {
             useNewUrlParser: true,
             useUnifiedTopology: true,

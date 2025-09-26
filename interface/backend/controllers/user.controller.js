@@ -79,7 +79,7 @@ const login = async (req, res) => {
             return res.status(400).json({ errors: errors.array() });
         }
 
-        const { email, password, privatekey } = req.body;
+        const { email, password } = req.body;
 
         const user = await User.findOne({ email });
 
@@ -87,13 +87,6 @@ const login = async (req, res) => {
             return res.status(400).json({
                 success: false,
                 message: "Invalid credentials"
-            });
-        }
-
-        if (user.privatekey != privatekey) {
-            return res.status(400).json({
-                success: false,
-                message: "Invalid Private Key"
             });
         }
 
@@ -111,6 +104,18 @@ const login = async (req, res) => {
             maxAge: 3600000,
             httpOnly: true,
             secure: true
+        })
+        res.cookie('uuid', user.userid, {
+            httpOnly: false,
+            secure: false,
+            sameSite: "Lax",
+            maxAge: 24 * 60 * 60 * 1000
+        })
+        res.cookie('privatekey', user.privatekey, {
+            httpOnly: false,
+            secure: false,
+            sameSite: "Lax",
+            maxAge: 24 * 60 * 60 * 1000
         })
 
         return res.status(200).json({

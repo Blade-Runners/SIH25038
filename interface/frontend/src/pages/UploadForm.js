@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './UploadForm.css';
+import Cookies from 'js-cookie';
 
 function UploadForm() {
+  // Form data
   const [formData, setFormData] = useState({
+    address: '',
     location: { latitude: '', longitude: '' },
     area: '',
     shape: 'rectangle',
@@ -15,7 +18,17 @@ function UploadForm() {
   const [locationError, setLocationError] = useState(null);
   const [submissionStatus, setSubmissionStatus] = useState({ message: '', type: '' });
 
-  //Get Live Location on Mount
+  // User info from cookies
+  const [user, setUser] = useState({ uuid: '', privatekey: '' });
+
+  // Fetch user cookies on mount
+  useEffect(() => {
+    const uuid = Cookies.get('uuid');
+    const privatekey = Cookies.get('privatekey');
+    if (uuid && privatekey) setUser({ uuid, privatekey });
+  }, []);
+
+  // Get live location on mount
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -38,13 +51,48 @@ function UploadForm() {
           maximumAge: 0,
         }
       );
-
     } else {
       setLocationError('Geolocation is not supported by your browser.');
       setIsLocating(false);
     }
   }, []);
 
+
+  const handleFetchCoordinates = async () => {
+    if (!formData.address) {
+      setLocationError("Please enter an address first.");
+      return;
+    }
+    try {
+      const response = await axios.get('https://nominatim.openstreetmap.org/search', {
+        params: {
+          q: formData.address,
+          format: 'json',
+          limit: 1
+        }
+      });
+      if (response.data && response.data.length > 0) {
+
+        const { lat, lon } = response.data[0];
+
+        setFormData((prev) => ({
+          ...prev,
+          location: {
+            latitude: parseFloat(lat).toFixed(5),
+            longitude: parseFloat(lon).toFixed(5)
+          }
+        }))
+
+      } else {
+        setLocationError("No results found.");
+      }
+    } catch (error) {
+      setLocationError("Error fetching coordinates.");
+      console.error(error);
+    }
+  };
+
+  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === 'latitude' || name === 'longitude') {
@@ -62,16 +110,13 @@ function UploadForm() {
     e.preventDefault();
     setSubmissionStatus({ message: 'Submitting...', type: 'info' });
 
-    // NOTE: In a real app, user details should come from a secure context/storage
-    // For now, we'll assume they are in localStorage after login.
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (!user || !user.userid || !user.privatekey) {
-      setSubmissionStatus({ message: 'Error: You must be logged in to submit.', type: 'error' });
+    if (!user.uuid || !user.privatekey) {
+      setSubmissionStatus({ message: 'User not logged in or cookies missing.', type: 'error' });
       return;
     }
 
     const payload = {
-      uuid: user.userid,
+      uuid: user.uuid,
       key: user.privatekey,
       data: {
         location: {
@@ -81,12 +126,11 @@ function UploadForm() {
         area: parseInt(formData.area, 10),
         shape: formData.shape,
         type: formData.type,
-        speciesData: formData.speciesData.split(',').map(s => s.trim()),
+        speciesData: formData.speciesData.split(',').map((s) => s.trim()),
       },
     };
 
     try {
-      // The blockchain server runs on port 3000
       const response = await axios.post('http://localhost:3000/api/submit', payload);
       console.log('Submission successful:', response.data);
       setSubmissionStatus({ message: `Submission successful! ID: ${response.data.submissionId}`, type: 'success' });
@@ -98,86 +142,97 @@ function UploadForm() {
   };
 
   return (
-    <div className="form-container">
-      <h2>Submit Project Data</h2>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Location (Latitude): <span className="location-status">{isLocating ? 'Fetching...' : '✅'}</span>
-          <input
-            type="text"
-            name="latitude"
-            value={formData.location.latitude}
-            onChange={handleChange}
-            placeholder="e.g., 21.9497"
-            required
-          />
-        </label>
+    <div className='main-container'>
+      <div className="form-container">
+        <h2>Submit Project Data</h2>
+        <form onSubmit={handleSubmit}>
+          <label>
+            Address:
+            <input
+              type="text"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              placeholder="Enter full address"
+            />
+            <button type="button" onClick={handleFetchCoordinates}>Get Coordinates</button>
+          </label>
+          <label>
+            Latitude: <span className="location-status">{isLocating ? 'Fetching...' : ''}</span>
+            <input
+              type="text"
+              name="latitude"
+              value={formData.location.latitude}
+              onChange={handleChange}
+              placeholder="e.g., 21.9497"
+              required
+            />
+          </label>
 
-        <label>
-          Location (Longitude):
-          <input
-            type="text"
-            name="longitude"
-            value={formData.location.longitude}
-            onChange={handleChange}
-            placeholder="e.g., 89.1833"
-            required
-          />
-        </label>
-        {locationError && <p className="location-error">{locationError}</p>}
+          <label>
+            Longitude:
+            <input
+              type="text"
+              name="longitude"
+              value={formData.location.longitude}
+              onChange={handleChange}
+              placeholder="e.g., 89.1833"
+              required
+            />
+          </label>
+          {locationError && <p className="location-error">{locationError}</p>}
 
-        <label>
-          Area (in square meters):
-          <input
-            type="number"
-            name="area"
-            value={formData.area}
-            onChange={handleChange}
-            placeholder="e.g., 1000"
-            required
-          />
-        </label>
+          <label>
+            Area (in square meters):
+            <input
+              type="number"
+              name="area"
+              value={formData.area}
+              onChange={handleChange}
+              placeholder="e.g., 1000"
+              required
+            />
+          </label>
 
-        <label>
-          Shape:
-          <select name="shape" value={formData.shape} onChange={handleChange}>
-            <option value="rectangle">Rectangle</option>
-            <option value="polygon">Polygon</option>
-            <option value="circle">Circle</option>
-          </select>
-        </label>
+          <label>
+            Shape:
+            <select name="shape" value={formData.shape} onChange={handleChange}>
+              <option value="rectangle">Rectangle</option>
+              <option value="polygon">Polygon</option>
+              <option value="circle">Circle</option>
+            </select>
+          </label>
 
-        <label>
-          Project Type:
-          <select name="type" value={formData.type} onChange={handleChange}>
-            <option value="restoration">Restoration</option>
-            <option value="conservation">Conservation</option>
-            <option value="new_planting">New Planting</option>
-          </select>
-        </label>
+          <label>
+            Project Type:
+            <select name="type" value={formData.type} onChange={handleChange}>
+              <option value="restoration">Restoration</option>
+              <option value="conservation">Conservation</option>
+              <option value="new_planting">New Planting</option>
+            </select>
+          </label>
 
-        <label>
-          Species (comma-separated):
-          <input
-            type="text"
-            name="speciesData"
-            value={formData.speciesData}
-            onChange={handleChange}
-            placeholder="e.g., Mangrove, Seagrass"
-            required
-          />
-        </label>
+          <label>
+            Species (comma-separated):
+            <input
+              type="text"
+              name="speciesData"
+              value={formData.speciesData}
+              onChange={handleChange}
+              placeholder="e.g., Mangrove, Seagrass"
+              required
+            />
+          </label>
 
-        <button type="submit" disabled={isLocating}>
-          {isLocating ? 'Please wait...' : 'Submit'}
-        </button>
+          <button type="submit" disabled={isLocating}>
+            {isLocating ? 'Please wait...' : 'Submit'}
+          </button>
 
-        {submissionStatus.message && (
-          <p className={`submission-status ${submissionStatus.type}`}>
-            {submissionStatus.message}
-          </p>
-        )}
-      </form>
+          {submissionStatus.message && (
+            <p className={`submission-status ${submissionStatus.type}`}>{submissionStatus.message}</p>
+          )}
+        </form>
+      </div>
     </div>
   );
 }

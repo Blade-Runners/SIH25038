@@ -9,7 +9,6 @@ const LoginRegisterPage = ({ setIsLoggedIn }) => {
     name: "",
     email: "",
     password: "",
-    privatekey: "",
   });
   const [error, setError] = useState("");
   const [registrationKey, setRegistrationKey] = useState(null);
@@ -34,7 +33,6 @@ const LoginRegisterPage = ({ setIsLoggedIn }) => {
         ? {
             email: formData.email,
             password: formData.password,
-            privatekey: formData.privatekey,
           }
         : {
             name: formData.name,
@@ -127,16 +125,6 @@ const LoginRegisterPage = ({ setIsLoggedIn }) => {
                 required
               />
               
-              {isLogin && (
-                <input
-                  type="text"
-                  name="privatekey"
-                  placeholder="Private Key"
-                  value={formData.privatekey}
-                  onChange={handleChange}
-                  required
-                />
-              )}
               <button type="submit">{isLogin ? "Login" : "Register"}</button>
             </form>
 

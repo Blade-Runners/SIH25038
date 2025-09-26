@@ -54,13 +54,13 @@
           </div>
           <div class="curl-content curl-linux active">
             <button class="copy-btn" onclick="copyCurl('register-linux')">Copy</button>
-            <pre id="register-linux">curl -X POST http://localhost:8080/api/register \
+            <pre id="register-linux">curl -X POST http://localhost:3000/api/register \
   -H "Content-Type: application/json" \
   -d '{"uuid": "12345678-1234-1234-1234-123456789abc"}'</pre>
           </div>
           <div class="curl-content curl-windows">
             <button class="copy-btn" onclick="copyCurl('register-windows')">Copy</button>
-            <pre id="register-windows">curl -X POST http://localhost:8080/api/register -H "Content-Type: application/json" -d "{\"uuid\": \"12345678-1234-1234-1234-123456789abc\"}"</pre>
+            <pre id="register-windows">curl -X POST http://localhost:3000/api/register -H "Content-Type: application/json" -d "{\"uuid\": \"12345678-1234-1234-1234-123456789abc\"}"</pre>
           </div>
         </div>
       </div>
@@ -99,7 +99,7 @@
           </div>
           <div class="curl-content curl-linux active">
             <button class="copy-btn" onclick="copyCurl('submit-linux')">Copy</button>
-            <pre id="submit-linux">curl -X POST http://localhost:8080/api/submit \
+            <pre id="submit-linux">curl -X POST http://localhost:3000/api/submit \
   -H "Content-Type: application/json" \
   -d '{
     "uuid": "12345678-1234-1234-1234-123456789abc",
@@ -115,7 +115,7 @@
           </div>
           <div class="curl-content curl-windows">
             <button class="copy-btn" onclick="copyCurl('submit-windows')">Copy</button>
-            <pre id="submit-windows">curl -X POST http://localhost:8080/api/submit -H "Content-Type: application/json" -d "{\"uuid\": \"12345678-1234-1234-1234-123456789abc\", \"key\": \"your-access-key\", \"data\": { \"location\": { \"latitude\": 12.345, \"longitude\": 67.890 }, \"area\": 1000, \"shape\": \"rectangle\", \"type\": \"restoration\", \"speciesData\": [\"Mangrove\", \"Seagrass\"] } }"</pre>
+            <pre id="submit-windows">curl -X POST http://localhost:3000/api/submit -H "Content-Type: application/json" -d "{\"uuid\": \"12345678-1234-1234-1234-123456789abc\", \"key\": \"your-access-key\", \"data\": { \"location\": { \"latitude\": 12.345, \"longitude\": 67.890 }, \"area\": 1000, \"shape\": \"rectangle\", \"type\": \"restoration\", \"speciesData\": [\"Mangrove\", \"Seagrass\"] } }"</pre>
           </div>
         </div>
       </div>
@@ -150,11 +150,11 @@
           </div>
           <div class="curl-content curl-linux active">
             <button class="copy-btn" onclick="copyCurl('data-linux')">Copy</button>
-            <pre id="data-linux">curl -X GET http://localhost:8080/api/data</pre>
+            <pre id="data-linux">curl -X GET http://localhost:3000/api/data</pre>
           </div>
           <div class="curl-content curl-windows">
             <button class="copy-btn" onclick="copyCurl('data-windows')">Copy</button>
-            <pre id="data-windows">curl -X GET http://localhost:8080/api/data</pre>
+            <pre id="data-windows">curl -X GET http://localhost:3000/api/data</pre>
           </div>
         </div>
       </div>
@@ -190,11 +190,11 @@
           </div>
           <div class="curl-content curl-linux active">
             <button class="copy-btn" onclick="copyCurl('pool-linux')">Copy</button>
-            <pre id="pool-linux">curl -X GET http://localhost:8080/api/pool</pre>
+            <pre id="pool-linux">curl -X GET http://localhost:3000/api/pool</pre>
           </div>
           <div class="curl-content curl-windows">
             <button class="copy-btn" onclick="copyCurl('pool-windows')">Copy</button>
-            <pre id="pool-windows">curl -X GET http://localhost:8080/api/pool</pre>
+            <pre id="pool-windows">curl -X GET http://localhost:3000/api/pool</pre>
           </div>
         </div>
       </div>
@@ -231,11 +231,11 @@
           </div>
           <div class="curl-content curl-linux active">
             <button class="copy-btn" onclick="copyCurl('chain-linux')">Copy</button>
-            <pre id="chain-linux">curl -X GET http://localhost:8080/api/chain</pre>
+            <pre id="chain-linux">curl -X GET http://localhost:3000/api/chain</pre>
           </div>
           <div class="curl-content curl-windows">
             <button class="copy-btn" onclick="copyCurl('chain-windows')">Copy</button>
-            <pre id="chain-windows">curl -X GET http://localhost:8080/api/chain</pre>
+            <pre id="chain-windows">curl -X GET http://localhost:3000/api/chain</pre>
           </div>
         </div>
       </div>
@@ -272,13 +272,13 @@
           </div>
           <div class="curl-content curl-linux active">
             <button class="copy-btn" onclick="copyCurl('credits-linux')">Copy</button>
-            <pre id="credits-linux">curl -X POST http://localhost:8080/api/credits \
+            <pre id="credits-linux">curl -X POST http://localhost:3000/api/credits \
   -H "Content-Type: application/json" \
   -d '{"uuid": "12345678-1234-1234-1234-123456789abc"}'</pre>
           </div>
           <div class="curl-content curl-windows">
             <button class="copy-btn" onclick="copyCurl('credits-windows')">Copy</button>
-            <pre id="credits-windows">curl -X POST http://localhost:8080/api/credits -H "Content-Type: application/json" -d "{\"uuid\": \"12345678-1234-1234-1234-123456789abc\"}"</pre>
+            <pre id="credits-windows">curl -X POST http://localhost:3000/api/credits -H "Content-Type: application/json" -d "{\"uuid\": \"12345678-1234-1234-1234-123456789abc\"}"</pre>
           </div>
         </div>
       </div>
@@ -314,13 +314,13 @@
           </div>
           <div class="curl-content curl-linux active">
             <button class="copy-btn" onclick="copyCurl('submission-linux')">Copy</button>
-            <pre id="submission-linux">curl -X POST http://localhost:8080/api/submission \
+            <pre id="submission-linux">curl -X POST http://localhost:3000/api/submission \
   -H "Content-Type: application/json" \
   -d '{"submissionId": "sub_abc123xyz"}'</pre>
           </div>
           <div class="curl-content curl-windows">
             <button class="copy-btn" onclick="copyCurl('submission-windows')">Copy</button>
-            <pre id="submission-windows">curl -X POST http://localhost:8080/api/submission -H "Content-Type: application/json" -d "{\"submissionId\": \"sub_abc123xyz\"}"</pre>
+            <pre id="submission-windows">curl -X POST http://localhost:3000/api/submission -H "Content-Type: application/json" -d "{\"submissionId\": \"sub_abc123xyz\"}"</pre>
           </div>
         </div>
       </div>
