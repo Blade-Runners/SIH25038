@@ -10,10 +10,14 @@ const LoginRegisterPage = ({ setIsLoggedIn }) => {
     password: "",
   });
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false); // Added loading state
   const [registrationKey, setRegistrationKey] = useState(null);
   const navigate = useNavigate();
 
-  const toggleForm = () => setIsLogin(!isLogin);
+  const toggleForm = () => {
+    setIsLogin(!isLogin);
+    setError(""); // Clear errors when toggling
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -22,29 +26,53 @@ const LoginRegisterPage = ({ setIsLoggedIn }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setIsLoading(true);
     setRegistrationKey(null);
 
+    const endpoint = isLogin ? "/auth" : "/register";
+
+    const body = {
+      email: formData.email,
+      password: formData.password,
+    };
+    if (!isLogin) {
+      body.name = formData.name;
+    }
+
     try {
-      const endpoint = isLogin ? "/auth" : "/register";
       const response = await fetch(`http://localhost:5000/v1${endpoint}`, {
-      	method: 'POST',
-      	body:JSON.stringify({
-      		"email":`${formData.email}`,
-      		"password":`${formData.password}`
-      	}),
-      	credentials: 'include'
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+        credentials: 'include'
       });
 
       if (response.ok) {
-          setIsLoggedIn(true);
+        setIsLoggedIn(true);
+        if (isLogin) {
+          const loginData = await response.json(); // Read the response body
+
+          // Check for the specific "Admin login" message
+          if (loginData.message === 'Admin login') {
+            navigate("/admin"); // Navigate to the admin page
+          } else {
+            navigate("/upload"); // Navigate to the regular user page
+          }
+        } else {
+          // For successful registration, navigate to the default page
           navigate("/upload");
+        }
       } else {
-        setError(response.message || "Something went wrong");
+        const errorData = await response.json();
+        setError(errorData.message || "An error occurred.");
       }
     } catch (err) {
-      setError(
-        err.response?.data?.message || "Server error. Please try again later."
-      );
+      console.error("Fetch error:", err);
+      setError("Server is not responding. Please try again later.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -60,12 +88,7 @@ const LoginRegisterPage = ({ setIsLoggedIn }) => {
               onClick={() => {
                 setRegistrationKey(null);
                 setIsLogin(true);
-                setFormData({
-                  name: "",
-                  email: "",
-                  password: "",
-                  privatekey: "",
-                });
+                setFormData({ name: "", email: "", password: "" });
               }}
               className="proceed-button"
             >
@@ -83,6 +106,7 @@ const LoginRegisterPage = ({ setIsLoggedIn }) => {
                   value={formData.name}
                   onChange={handleChange}
                   required
+                  disabled={isLoading}
                 />
               )}
               <input
@@ -92,6 +116,7 @@ const LoginRegisterPage = ({ setIsLoggedIn }) => {
                 value={formData.email}
                 onChange={handleChange}
                 required
+                disabled={isLoading}
               />
               <input
                 type="password"
@@ -100,9 +125,12 @@ const LoginRegisterPage = ({ setIsLoggedIn }) => {
                 value={formData.password}
                 onChange={handleChange}
                 required
+                disabled={isLoading}
               />
-              
-              <button type="submit">{isLogin ? "Login" : "Register"}</button>
+
+              <button type="submit" disabled={isLoading}>
+                {isLoading ? "Submitting..." : (isLogin ? "Login" : "Register")}
+              </button>
             </form>
 
             {error && <p className="error">{error}</p>}

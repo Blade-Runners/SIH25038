@@ -72,7 +72,7 @@ export default {
 						headers: { ...getHeaders() },
 					});
 				}
-				if(uuid.uuid='uuid')
+				if(uuid.uuid==='uuid')
 				return new Response(JSON.stringify({ message: 'Admin login' }), {
 					status: 200,
 					headers: {
