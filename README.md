@@ -100,4 +100,4 @@ All code, designs, and documentation are property of the Indian blue carbon tech
 
 ---
 
-**Jai Hind. For a Cleaner, Greener, Stronger Coast.**
+**Jai Hind🔥. For a Cleaner, Greener, Stronger Coast.**
