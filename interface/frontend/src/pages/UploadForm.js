@@ -4,6 +4,7 @@ import './UploadForm.css';
 
 function UploadForm() {
   const [formData, setFormData] = useState({
+    address: '',
     location: { latitude: '', longitude: '' },
     area: '',
     shape: 'rectangle',
@@ -44,6 +45,9 @@ function UploadForm() {
       setIsLocating(false);
     }
   }, []);
+
+
+
 
   const handleFetchCoordinates = async () => {
     if (!formData.address) {
@@ -91,30 +95,30 @@ function UploadForm() {
     }
   };
 
-  
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmissionStatus({ message: 'Submitting...', type: 'info' });
 
     const data = {
-        location: {
-          latitude: parseFloat(formData.location.latitude),
-          longitude: parseFloat(formData.location.longitude),
-        },
-        area: parseInt(formData.area, 10),
-        shape: formData.shape,
-        type: formData.type,
-        speciesData: formData.speciesData.split(',').map(s => s.trim()),
+      location: {
+        latitude: parseFloat(formData.location.latitude),
+        longitude: parseFloat(formData.location.longitude),
+      },
+      area: parseInt(formData.area, 10),
+      shape: formData.shape,
+      type: formData.type,
+      speciesData: formData.speciesData.split(',').map(s => s.trim()),
     };
 
     try {
-      const response = await fetch('http://localhost:5000/v1/submit',{
-		method: 'POST',
-      	body: JSON.stringify({ data }),
-      	credentials:'include',
+      const response = await fetch('http://localhost:5000/v1/submit', {
+        method: 'POST',
+        body: JSON.stringify({ data }),
+        credentials: 'include',
       });
-      
+
       console.log('Submission successful:', response);
       const res = await response.json();
       console.log(res);
@@ -130,6 +134,19 @@ function UploadForm() {
     <div className="form-container">
       <h2>Submit Project Data</h2>
       <form onSubmit={handleSubmit}>
+
+        <label>
+          Address:
+          <input
+            type="text"
+            name="address"
+            value={formData.address}
+            onChange={handleChange}
+            placeholder="Enter full address"
+          />
+          <button type="button" onClick={handleFetchCoordinates}>Get Coordinates</button>
+        </label>
+        
         <label>
           Location (Latitude): <span className="location-status">{isLocating ? 'Fetching...' : '✅'}</span>
           <input
