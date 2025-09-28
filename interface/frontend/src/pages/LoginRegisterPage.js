@@ -31,7 +31,8 @@ const LoginRegisterPage = ({ setIsLoggedIn }) => {
       	body:JSON.stringify({
       		"email":`${formData.email}`,
       		"password":`${formData.password}`
-      	})
+      	}),
+      	credentials: 'include'
       });
 
       if (response.ok) {
@@ -55,10 +56,6 @@ const LoginRegisterPage = ({ setIsLoggedIn }) => {
         {registrationKey ? (
           <div className="registration-success">
             <h3>Registration Successful!</h3>
-            // <p>Please save your private key. You will need it to log in.</p>
-            // <div className="private-key-box">
-            //   <code>{registrationKey}</code>
-            // </div>
             <button
               onClick={() => {
                 setRegistrationKey(null);

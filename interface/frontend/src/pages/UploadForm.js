@@ -45,6 +45,40 @@ function UploadForm() {
     }
   }, []);
 
+  const handleFetchCoordinates = async () => {
+    if (!formData.address) {
+      setLocationError("Please enter an address first.");
+      return;
+    }
+    try {
+      const response = await axios.get('https://nominatim.openstreetmap.org/search', {
+        params: {
+          q: formData.address,
+          format: 'json',
+          limit: 1
+        }
+      });
+      if (response.data && response.data.length > 0) {
+
+        const { lat, lon } = response.data[0];
+
+        setFormData((prev) => ({
+          ...prev,
+          location: {
+            latitude: parseFloat(lat).toFixed(5),
+            longitude: parseFloat(lon).toFixed(5)
+          }
+        }))
+
+      } else {
+        setLocationError("No results found.");
+      }
+    } catch (error) {
+      setLocationError("Error fetching coordinates.");
+      console.error(error);
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === 'latitude' || name === 'longitude') {
@@ -57,11 +91,11 @@ function UploadForm() {
     }
   };
 
+  
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmissionStatus({ message: 'Submitting...', type: 'info' });
-    const user = JSON.parse(localStorage.getItem('user'));
 
     const data = {
         location: {
